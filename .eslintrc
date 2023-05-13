@@ -3,6 +3,8 @@
     "@piktew/eslint-config-react"
   ],
   "rules": {
-    "import/no-unresolved": "off"
+    "import/no-unresolved": "off",
+    "no-underscore-dangle": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
   }
 }

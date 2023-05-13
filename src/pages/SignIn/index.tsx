@@ -6,7 +6,7 @@ import * as Google from 'expo-auth-session/providers/google'
 import { Realm, useApp } from '@realm/react'
 import { ANDROID_CLIENT_ID, IOS_CLIENT_ID } from '@env'
 
-import { Container, Title, Slogan } from './styles'
+import * as S from './styles'
 import backgroundImg from '../../assets/background.png'
 import { Button } from '../../components/Button'
 
@@ -38,7 +38,7 @@ export function SignIn() {
         const credentials = Realm.Credentials.jwt(response.authentication.idToken)
 
         app.logIn(credentials).catch((error) => {
-          console.log(error)
+          console.error(error)
           Alert.alert('Entrar', 'Não foi possível conectar-se a sua conta google.')
           setIsAuthenticating(false)
         })
@@ -51,14 +51,14 @@ export function SignIn() {
   }, [response])
 
   return (
-    <Container source={backgroundImg}>
-      <Title>Ignite Fleet</Title>
-      <Slogan>Gestão de uso de veículos</Slogan>
+    <S.Container source={backgroundImg}>
+      <S.Title>Ignite Fleet</S.Title>
+      <S.Slogan>Gestão de uso de veículos</S.Slogan>
       <Button
         title="Entrar com Google"
         onPress={handleGoogleSignIn}
         isLoading={isAuthenticating}
       />
-    </Container>
+    </S.Container>
   )
 }
