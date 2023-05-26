@@ -13,7 +13,6 @@ export const LicensePlateInput = forwardRef<TextInput, LicensePlateInputProps>((
   return (
     <S.Container>
       <S.Label>{label}</S.Label>
-
       <S.Input
         ref={ref}
         maxLength={7}
