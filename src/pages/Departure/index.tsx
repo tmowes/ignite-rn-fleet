@@ -1,9 +1,17 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Alert, ScrollView, TextInput } from 'react-native'
 
 import { useNavigation } from '@react-navigation/native'
 import { useUser } from '@realm/react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {
+  LocationAccuracy,
+  LocationSubscription,
+  useForegroundPermissions,
+  watchPositionAsync,
+  LocationObjectCoords,
+} from 'expo-location'
+import { CarSimple } from 'phosphor-react-native'
 
 import { Button } from '../../components/Button'
 import { Header } from '../../components/Header'
@@ -12,12 +20,20 @@ import * as S from './styles'
 import { licensePlateValidate } from '../../utils/licensePlateValidate'
 import { useRealm } from '../../libs/realm'
 import { Historic } from '../../libs/realm/schemas/Historic'
+import { getAddressLocation } from '../../utils/getAddressLocation'
+import { Loading } from '../../components/Loading'
+import { LocationInfo } from '../../components/LocationInfo'
+import { Map } from '../../components/Map'
 
 export function Departure() {
   const [licensePlate, setLicensePlate] = useState('')
   const [description, setDescription] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
-
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true)
+  const [currentAddress, setCurrentAddress] = useState<string | null>(null)
+  const [currentCoords, setCurrentCoords] = useState<LocationObjectCoords | null>(null)
+  const [locationForegroundPermission, requestLocationForegroundPermission] =
+    useForegroundPermissions()
   const { goBack } = useNavigation()
   const realm = useRealm()
   const user = useUser()
@@ -62,12 +78,76 @@ export function Departure() {
     }
   }
 
+  useEffect(() => {
+    requestLocationForegroundPermission()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!locationForegroundPermission?.granted) {
+      return
+    }
+
+    let subscription: LocationSubscription
+
+    watchPositionAsync(
+      {
+        accuracy: LocationAccuracy.High,
+        timeInterval: 1000,
+      },
+      ({ coords }) => {
+        setCurrentCoords(coords)
+        getAddressLocation(coords)
+          .then((address) => {
+            if (address) {
+              setCurrentAddress(address)
+            }
+          })
+          .finally(() => setIsLoadingLocation(false))
+      },
+    ).then((response) => {
+      subscription = response
+    })
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      if (subscription) {
+        subscription.remove()
+      }
+    }
+  }, [locationForegroundPermission?.granted])
+
+  if (!locationForegroundPermission?.granted) {
+    return (
+      <S.Container>
+        <Header title="Saída" />
+        <S.Message>
+          Você precisa permitir que o aplicativo tenha acesso a localização para acessar essa
+          funcionalidade. Por favor, acesse as configurações do seu dispositivo para conceder a
+          permissão ao aplicativo.
+        </S.Message>
+      </S.Container>
+    )
+  }
+
+  if (isLoadingLocation) {
+    return <Loading />
+  }
+
   return (
     <S.Container>
       <Header title="Saída" />
       <KeyboardAwareScrollView extraHeight={100}>
         <ScrollView>
+          {currentCoords && <Map coordinates={[currentCoords]} />}
           <S.Content>
+            {currentAddress && (
+              <LocationInfo
+                icon={CarSimple}
+                label="Localização atual"
+                description={currentAddress}
+              />
+            )}
             <C.LicensePlateInput
               ref={licensePlateRef}
               label="Placa do veículo"

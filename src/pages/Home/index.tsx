@@ -98,7 +98,7 @@ export function Home() {
         .objects('Historic')
         .filtered(`user_id = '${user!.id}'`)
 
-      mutableSubs.add(historicByUserQuery, { name: 'hostoric_by_user' })
+      mutableSubs.add(historicByUserQuery, { name: 'historic_by_user' })
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [realm])
