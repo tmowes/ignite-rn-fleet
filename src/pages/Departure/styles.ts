@@ -6,6 +6,7 @@ export const Container = styled.View`
     background-color: ${theme.COLORS.GRAY_800};
   `}
 `
+
 export const Content = styled.View`
   flex: 1;
   gap: 16px;
@@ -18,6 +19,12 @@ export const Message = styled.Text`
     color: ${theme.COLORS.WHITE};
     font-family: ${theme.FONT_FAMILY.REGULAR};
     text-align: center;
-    margin: 24px;
+    margin-bottom: 40px;
   `}
+`
+
+export const MessageContent = styled.View`
+  flex: 1;
+  justify-content: center;
+  padding: 24px;
 `

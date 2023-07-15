@@ -21,6 +21,9 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.tmowes.ignitefleet',
+      infoPlist: {
+        UIBackgroundModes: ['location'],
+      },
       config: {
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
       },
@@ -31,6 +34,11 @@ module.exports = {
         backgroundColor: '#202024',
       },
       package: 'com.tmowes.ignitefleet',
+      permissions: [
+        'ACCESS_FINE_LOCATION',
+        'ACCESS_COARSE_LOCATION',
+        'ACCESS_BACKGROUND_LOCATION',
+      ],
       config: {
         googleMaps: {
           apiKey: process.env.GOOGLE_MAPS_API_KEY,

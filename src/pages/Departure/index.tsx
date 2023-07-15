@@ -10,6 +10,7 @@ import {
   useForegroundPermissions,
   watchPositionAsync,
   LocationObjectCoords,
+  requestBackgroundPermissionsAsync,
 } from 'expo-location'
 import { CarSimple } from 'phosphor-react-native'
 
@@ -24,6 +25,8 @@ import { getAddressLocation } from '../../utils/getAddressLocation'
 import { Loading } from '../../components/Loading'
 import { LocationInfo } from '../../components/LocationInfo'
 import { Map } from '../../components/Map'
+import { startLocationTask } from '../../tasks/location'
+import { openSettings } from '../../utils/openSettings'
 
 export function Departure() {
   const [licensePlate, setLicensePlate] = useState('')
@@ -41,7 +44,7 @@ export function Departure() {
   const licensePlateRef = useRef<TextInput>(null)
   const descriptionRef = useRef<TextInput>(null)
 
-  const onRegisterDeparture = () => {
+  const onRegisterDeparture = async () => {
     try {
       if (!licensePlateValidate(licensePlate)) {
         licensePlateRef.current?.focus()
@@ -55,7 +58,29 @@ export function Departure() {
         return
       }
 
+      if (!currentCoords?.latitude && !currentCoords?.longitude) {
+        Alert.alert(
+          'Localização',
+          'Não foi possível obter a localização atual. Tente novamente.',
+        )
+        return
+      }
+
       setIsRegistering(true)
+
+      const backgroundPermissions = await requestBackgroundPermissionsAsync()
+
+      if (!backgroundPermissions.granted) {
+        setIsRegistering(false)
+        Alert.alert(
+          'Localização',
+          'É necessário permitir que o App tenha acesso localização em segundo plano. Acesse as configurações do dispositivo e habilite "Permitir o tempo todo."',
+          [{ text: 'Abrir configurações', onPress: openSettings }],
+        )
+        return
+      }
+
+      await startLocationTask()
 
       realm.write(() => {
         realm.create(
@@ -64,6 +89,13 @@ export function Departure() {
             user_id: user!.id,
             license_plate: licensePlate,
             description,
+            coords: [
+              {
+                latitude: currentCoords.latitude,
+                longitude: currentCoords.longitude,
+                timestamp: new Date().getTime(),
+              },
+            ],
           }),
         )
       })
@@ -121,11 +153,14 @@ export function Departure() {
     return (
       <S.Container>
         <Header title="Saída" />
-        <S.Message>
-          Você precisa permitir que o aplicativo tenha acesso a localização para acessar essa
-          funcionalidade. Por favor, acesse as configurações do seu dispositivo para conceder a
-          permissão ao aplicativo.
-        </S.Message>
+        <S.MessageContent>
+          <S.Message>
+            Você precisa permitir que o aplicativo tenha acesso a localização para acessar essa
+            funcionalidade. Por favor, acesse as configurações do seu dispositivo para conceder
+            a permissão ao aplicativo.
+          </S.Message>
+          <Button title="Abrir configurações" onPress={openSettings} />
+        </S.MessageContent>
       </S.Container>
     )
   }

@@ -53,6 +53,9 @@ dependencies:
   expo-system-ui:
     specifier: ~2.2.1
     version: 2.2.1(expo@48.0.18)
+  expo-task-manager:
+    specifier: ~11.1.1
+    version: 11.1.1(expo@48.0.18)
   expo-web-browser:
     specifier: ~12.1.1
     version: 12.1.1(expo@48.0.18)
@@ -4597,6 +4600,15 @@ packages:
       - supports-color
     dev: false
 
+  /expo-task-manager@11.1.1(expo@48.0.18):
+    resolution: {integrity: sha512-Ot4wq0fVd8+I1W7MsJz0rNdX0ma/zdnBvAppxDX1Oo0o0exo4qs1FmgrTnh3OBnn18aB4cX3wBJoXIatIgNMZQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 48.0.18(@babel/core@7.21.5)
+      unimodules-app-loader: 4.1.2
+    dev: false
+
   /expo-web-browser@12.1.1(expo@48.0.18):
     resolution: {integrity: sha512-QdFnJKCKzWrvTIjFL2Yb6SlfyJWfBw1S1ceRyGtQSp4p7WFsvfbR6oJyucF04SJD7GshBluIlchrQK7XH/4EWQ==}
     peerDependencies:
@@ -8828,6 +8840,10 @@ packages:
   /unicode-property-aliases-ecmascript@2.1.0:
     resolution: {integrity: sha512-6t3foTQI9qne+OZoVQB/8x8rk2k1eVy1gRXhV3oFQ5T6R1dqQ1xtin3XqSlx3+ATBkliTaR/hHyJBm+LVPNM8w==}
     engines: {node: '>=4'}
+
+  /unimodules-app-loader@4.1.2:
+    resolution: {integrity: sha512-DLYUCjNpguFhNpxNsBf47NWZi2OjIfWCVQY4f+r4/bwIqFfR7qQd6lXwCFA8EhHS1ti87CBzjMSbIC5bB0J/0Q==}
+    dev: false
 
   /union-value@1.0.1:
     resolution: {integrity: sha512-tJfXmxMeWYnczCVs7XAEvIV7ieppALdyepWMkHkwciRpZraG/xwT+s2JN8+pr1+8jCRf80FFzvr+MpQeeoF4Xg==}
